@@ -1,0 +1,23 @@
+{
+  "projeto": "InvestFacil",
+  "versao": "1.0.0",
+  "api": {
+    "base_url": "https://brapi.dev/api",
+    "rate_limit_delay": 1,
+    "max_retries": 3,
+    "timeout": 30
+  },
+  "ingestao": {
+    "tickers_limit": 50,
+    "bolsas": ["B3"]
+  },
+  "export": {
+    "s3_bucket": "bucket-aws-databricks",
+    "s3_prefix": "investfacil/export"
+  },
+  "schedule": {
+    "timezone": "America/Sao_Paulo",
+    "hora": "19:00",
+    "frequencia": "diaria"
+  }
+}
