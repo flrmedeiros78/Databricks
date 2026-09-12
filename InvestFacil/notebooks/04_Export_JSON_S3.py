@@ -32,7 +32,7 @@ from pyspark.sql.functions import col, to_json, struct, collect_list
 
 # Configurações de Export (Unity Catalog Volume)
 # Nota: Para usar S3, configure as credenciais AWS no cluster primeiro
-EXPORT_PATH = "/Workspace/Users/fabiolrm78@gmail.com/InvestFacil/export/"
+EXPORT_PATH = "/Workspace/Users/fabiolrm78@gmail.com/Databricks/InvestFacilWeb/"
 
 # Criar diretório de export se não existir
 try:

@@ -1,50 +1,69 @@
-# InvestFácil - Pipeline de Dados B3
+# InvestFacil - Pipeline de Dados B3
 
-## 📁 Estrutura do Projeto
+Pipeline de dados para ingestão e processamento de ações da B3.
 
-```
-InvestFacil/
-├── notebooks/          # Notebooks do pipeline ETL
-│   ├── 01_Bronze_Ingestao_B3.ipynb
-│   ├── 02_Silver_Transformacao.ipynb
-│   ├── 03_Gold_Indicadores.ipynb
-│   └── 04_Export_JSON_S3.ipynb
-├── docs/              # Documentação do projeto
-│   └── arquitetura.md
-└── config/            # Arquivos de configuração
-    └── parametros.json
+## Arquitetura Medallion
 
-```
+O pipeline segue a arquitetura Medallion com 3 camadas:
 
-## 🎯 Objetivo
+### Bronze (Ingestão)
+- **Notebook**: `01_Bronze_Ingestao_B3.ipynb`
+- **Fonte**: Yahoo Finance API (yfinance)
+- **Frequência**: Diária
+- **Output**: 
+  - `investfacil_catalog.bronze.raw_quotes`
+  - `investfacil_catalog.bronze.raw_fundamentals`
 
-Pipeline automatizado para ingestão, transformação e análise de dados da B3 (Bolsa de Valores brasileira), 
-fornecendo indicadores fundamentalistas para o site InvestFácil.
+### Silver (Transformação)
+- **Notebook**: `02_Silver_Transformacao.ipynb`
+- **Processamento**: Limpeza, normalização, validação
+- **Output**:
+  - `investfacil_catalog.silver.cotacoes`
+  - `investfacil_catalog.silver.fundamentos`
 
-## 🏗️ Arquitetura Medalhão
+### Gold (Indicadores)
+- **Notebook**: `03_Gold_Indicadores.ipynb`
+- **Cálculos**: 
+  - Dividend Yield
+  - P/L (Preço/Lucro)
+  - Volatilidade
+  - Momentum
+  - Liquidez
+- **Output**:
+  - `investfacil_catalog.gold.indicadores_completos`
+  - `investfacil_catalog.gold.cotacoes_historico`
 
-- **Bronze**: Dados brutos da API brapi.dev
-- **Silver**: Dados limpos e normalizados  
-- **Gold**: Indicadores calculados e prontos para consumo
+### Export (JSON)
+- **Notebook**: `04_Export_JSON_S3.ipynb`
+- **Formato**: JSON para consumo web
+- **Destino**: Pasta `InvestFacilWeb/`
 
-## 📊 Unity Catalog
+## Job Diário
 
-- **Catalog**: `investfacil_catalog`
-- **Schemas**: `bronze`, `silver`, `gold`
+**Nome**: InvestFacil_Pipeline_Diario  
+**ID**: 679490622792902  
+**Schedule**: Diariamente às 19h (após fechamento do mercado)  
+**Timeout**: 30 minutos
 
-## 🔄 Job Orquestrador
+## Tecnologias
 
-- **Nome**: InvestFacil_Pipeline_Diario
-- **Schedule**: Diariamente às 19h (America/Sao_Paulo)
-- **Compute**: Serverless
+- **Databricks**: Plataforma de processamento
+- **PySpark**: Transformações de dados
+- **Delta Lake**: Armazenamento (tabelas ACID)
+- **Yahoo Finance API**: Fonte de dados gratuita
 
-## 📤 Output
+## Dados Processados
 
-Arquivos JSON exportados para S3:
-- `s3://bucket-aws-databricks/investfacil/export/indicadores.json`
-- `s3://bucket-aws-databricks/investfacil/export/historico.json`
-- `s3://bucket-aws-databricks/investfacil/export/metadata.json`
+- **251 ações** do Ibovespa
+- **Indicadores fundamentalistas** e técnicos
+- **Dados atualizados** diariamente
+- **Histórico** incremental
 
-## 🌐 Integração Netlify
+## Aplicação Web
 
-O front-end consome os JSONs do S3 via CloudFront (zero custo de compute).
+Os dados processados alimentam a aplicação web em:
+`../InvestFacilWeb/`
+
+## Autor
+
+Desenvolvido com Databricks Community Edition
