@@ -23,15 +23,15 @@ flowchart TD
     UC_GOLD[/"Unity Catalog<br/>gold.indicadores_completos<br/>gold.cotacoes_historico"/]
     
     API -->|"866 ações<br/>cotações + fundamentos"| JOB
-    JOB -->|"Tarefa 1<br/>107s"| BRONZE
+    JOB -->|"Ingestão"| BRONZE
     BRONZE -->|"grava"| UC_BRONZE
-    BRONZE -->|"Tarefa 2<br/>42s"| SILVER
+    BRONZE -->|"Transformação"| SILVER
     SILVER -->|"grava"| UC_SILVER
-    SILVER -->|"Tarefa 3<br/>26s"| GOLD
+    SILVER -->|"Indicadores"| GOLD
     GOLD -->|"grava"| UC_GOLD
-    GOLD -->|"Tarefa 4<br/>14s"| EXPORT
-    EXPORT -->|"3 arquivos JSON<br/>REST API"| GITHUB
-    GITHUB -->|"Netlify<br/>deploy automático"| WEB
+    GOLD -->|"Export JSON"| EXPORT
+    EXPORT -->|"Push GitHub<br/>REST API"| GITHUB
+    GITHUB -->|"Deploy"| WEB
     
     style API fill:#b3e5fc,color:#000,stroke:#0288d1,stroke-width:2px
     style JOB fill:#DDA0DD,color:#000,stroke:#9370DB,stroke-width:2px
