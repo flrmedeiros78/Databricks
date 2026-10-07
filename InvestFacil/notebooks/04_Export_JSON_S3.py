@@ -32,7 +32,7 @@ from pyspark.sql.functions import col, to_json, struct, collect_list
 
 # Configurações de Export (Unity Catalog Volume)
 # Nota: Para usar S3, configure as credenciais AWS no cluster primeiro
-EXPORT_PATH = "/Workspace/Users/fabiolrm78@gmail.com/InvestFacilWeb/"
+EXPORT_PATH = "/Workspace/Users/fabiolrm78@gmail.com/InvestFacil/export/"
 
 # Criar diretório de export se não existir
 try:
@@ -277,3 +277,69 @@ print(f"\n[INFO] Arquivos disponiveis para download e deploy no Netlify")
 
 # COMMAND ----------
 
+# COMMAND ----------
+
+# DBTITLE 1,Push JSONs para GitHub (InvestFacilWeb/Import-Json-InvestFacil)
+# 7. Push dos JSONs para o repositório InvestFacilWeb no GitHub
+print("\n[INFO] Enviando JSONs para GitHub (InvestFacilWeb/Import-Json-InvestFacil)...")
+
+import subprocess
+import shutil
+import os
+
+# Clonar o repo InvestFacilWeb
+repo_dir = "/tmp/InvestFacilWeb_push"
+if os.path.exists(repo_dir):
+    shutil.rmtree(repo_dir)
+
+result = subprocess.run(
+    ["git", "clone", "https://github.com/flrmedeiros78/InvestFacilWeb.git", repo_dir],
+    capture_output=True, text=True, timeout=60
+)
+
+if result.returncode == 0:
+    print("[OK] Repo InvestFacilWeb clonado")
+
+    # Criar pasta Import-Json-InvestFacil se não existir
+    target_dir = os.path.join(repo_dir, "Import-Json-InvestFacil")
+    os.makedirs(target_dir, exist_ok=True)
+
+    # Copiar JSONs do workspace para o repo
+    for filename in ["indicadores.json", "historico.json", "metadata.json"]:
+        src = f"file:{EXPORT_PATH}{filename}"
+        dst = os.path.join(target_dir, filename)
+        try:
+            dbutils.fs.cp(src, f"file:{dst}")
+            print(f"  [OK] {filename} copiado")
+        except Exception as e:
+            print(f"  [WARN] {filename}: {e}")
+
+    # Configurar git
+    subprocess.run(["git", "config", "user.name", "fabiolrm78"], cwd=repo_dir, capture_output=True)
+    subprocess.run(["git", "config", "user.email", "fabiolrm78@gmail.com"], cwd=repo_dir, capture_output=True)
+
+    # Adicionar, commitar e pushar
+    subprocess.run(["git", "add", "Import-Json-InvestFacil/"], cwd=repo_dir, capture_output=True)
+    commit = subprocess.run(
+        ["git", "commit", "-m", f"Atualiza JSONs do pipeline InvestFacil - {data_hora_sp.strftime('%Y-%m-%d %H:%M')}"],
+        cwd=repo_dir, capture_output=True, text=True
+    )
+
+    if commit.returncode == 0 or "nothing to commit" in commit.stderr:
+        push = subprocess.run(
+            ["git", "push", "origin", "main"],
+            cwd=repo_dir, capture_output=True, text=True, timeout=60
+        )
+        if push.returncode == 0:
+            print("[SUCCESS] JSONs enviados para GitHub!")
+        else:
+            print(f"[WARN] Push falhou: {push.stderr}")
+    else:
+        print(f"[INFO] Nada para commitar (dados unchanged): {commit.stdout}")
+
+    # Limpar
+    shutil.rmtree(repo_dir)
+else:
+    print(f"[ERROR] Falha ao clonar repo: {result.stderr}")
+
+print("\n[DONE] Pipeline InvestFacil concluído!")
