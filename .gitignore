@@ -1,0 +1,8 @@
+# Arquivos .crc (metadados Hadoop - desnecessarios)
+*.crc
+
+# Notebook de configuracao de tokens (seguranca - nao versionar)
+InvestFacil/notebooks/00_ConfigToken.ipynb
+
+# Diretorio de export temporario
+InvestFacil/export/
