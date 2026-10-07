@@ -1,0 +1,8 @@
+# Arquivos .crc (metadados Hadoop)
+*.crc
+
+# Notebook de configuracao de tokens (seguranca)
+notebooks/00_ConfigToken.ipynb
+
+# Diretorio de export temporario
+export/
