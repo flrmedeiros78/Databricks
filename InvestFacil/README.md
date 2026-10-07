@@ -33,13 +33,13 @@ flowchart TD
     EXPORT -->|"3 arquivos JSON<br/>REST API"| GITHUB
     GITHUB -->|"Netlify<br/>deploy automático"| WEB
     
-    style API fill:#b3e5fc,stroke:#0288d1,stroke-width:2px
+    style API fill:#b3e5fc,color:#000,stroke:#0288d1,stroke-width:2px
     style JOB fill:#DDA0DD,color:#000,stroke:#9370DB,stroke-width:2px
     style BRONZE fill:#8d6e63,color:#fff,stroke:#5d4037,stroke-width:2px
     style SILVER fill:#bdbdbd,color:#333,stroke:#757575,stroke-width:2px
     style GOLD fill:#ffd54f,color:#333,stroke:#f57f17,stroke-width:2px
-    style EXPORT fill:#81c784,color:#fff,stroke:#388e3c,stroke-width:2px
-    style GITHUB fill:#81c784,color:#fff,stroke:#388e3c,stroke-width:2px
+    style EXPORT fill:#81c784,color:#000,stroke:#388e3c,stroke-width:2px
+    style GITHUB fill:#81c784,color:#000,stroke:#388e3c,stroke-width:2px
     style WEB fill:#00C7B7,color:#000,stroke:#00A896,stroke-width:2px
     style UC_BRONZE fill:#bbdefb,color:#000,stroke:#1976d2,stroke-width:2px
     style UC_SILVER fill:#bbdefb,color:#000,stroke:#1976d2,stroke-width:2px
