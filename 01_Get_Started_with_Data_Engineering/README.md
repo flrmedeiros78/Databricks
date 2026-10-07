@@ -23,8 +23,7 @@ Módulo de treinamento oficial Databricks focado em fundamentos de Engenharia de
 │   ├── Notebook_Employes_Bronze
 │   └── Notebook_Employes_Silver_Gold
 ├── Pipeline_bronze_silver_gold_sdp/
-│   └── transformations/
-│       └── my_transformation.py
+│   (pipeline configurado para usar os notebooks da pasta Orchestration/)
 └── Orchestration/
     ├── Notebook_Bronze_SDP
     ├── Notebook_Silver_SDP
@@ -314,22 +313,31 @@ Implementação de pipeline declarativo usando Spark Declarative Pipelines (SDP)
 ┌──────────────────────────────────────────────────────────────────┐
 │  Pipeline Configuration                                          │
 │  ──────────────────────────────────────────────────────────────  │
-│  - Catalog: dbacademy                                            │
-│  - Schema: get_started_de                                        │
-│  - Target: UC Tables                                             │
-│  - Mode: TRIGGERED / CONTINUOUS                                  │
+│  - Catalog: workspace                                            │
+│  - Schema: default                                               │
+│  - Target: UC Tables (dbacademy.get_started_de)                  │
+│  - Serverless: Yes                                               │
+│  - Photon: Yes                                                   │
+│  - Mode: TRIGGERED                                               │
 └──────────────────────────────────────────────────────────────────┘
 
 ┌──────────────────────────────────────────────────────────────────┐
-│  transformations/                                                │
+│  Libraries (Notebooks da pasta Orchestration/)                   │
 │  ──────────────────────────────────────────────────────────────  │
-│  my_transformation.py                                            │
 │                                                                  │
-│  Contém:                                                         │
-│  - Bronze: Streaming Table (Auto Loader)                        │
-│  - Silver: Materialized View (limpeza e validação)               │
-│  - Gold: Materialized View (agregações analytics)                │
-│  - Data quality expectations                                     │
+│  📒 Notebook_Bronze_SDP                                          │
+│  - CREATE STREAMING TABLE employes_bronze_sdp                   │
+│  - Ingestao via read_files() de CSV no volume myfiles            │
+│                                                                  │
+│  📒 Notebook_Silver_SDP                                          │
+│  - CREATE MATERIALIZED VIEW employes_silver_sdp                 │
+│  - Validacoes: ID NOT NULL, FirstName NOT NULL                  │
+│  - Transformacoes: UPPER(FirstName), UPPER(Country), UPPER(Role)│
+│  - Colunas de auditoria: dt_procs_timestamp, dt_procs            │
+│                                                                  │
+│  📒 Notebook_Gold_SDP                                            │
+│  - CREATE MATERIALIZED VIEW employes_gold_sdp                   │
+│  - Agregacao: contagem de funcionarios por Role                 │
 └──────────────────────────────────────────────────────────────────┘
 
            ┌──────────────────────────────────┐
@@ -578,8 +586,8 @@ DESCRIBE EXTENDED table_name;
 
 4. **Pipeline SDP**
    ```
-   Criar Pipeline no Lakeflow apontando para pasta Pipeline_bronze_silver_gold_sdp/
-   Executar pipeline
+   Pipeline ja configurado no Lakeflow apontando para os 3 notebooks da pasta Orchestration/
+   Executar pipeline pelo editor (botao Start/Run)
    ```
 
 5. **Orchestration**
