@@ -289,11 +289,11 @@ Implementação prática da arquitetura Medallion (Bronze-Silver-Gold) com dados
 
 **Padrões Implementados:**
 
-| Camada | Objetivo | Tipo de Dados | Processamento |
-|--------|----------|---------------|---------------|
-| Bronze | Ingestão | Raw/Bruto | Nenhum |
-| Silver | Limpeza | Validado | ETL |
-| Gold | Analytics | Agregado | Business Logic |
+| Camada | Objetivo | Tipo de Dados | Tipo SDP | Processamento |
+|--------|----------|---------------|----------|---------------|
+| Bronze | Ingestão | Raw/Bruto | Streaming Table | Nenhum |
+| Silver | Limpeza | Validado | Materialized View | ETL |
+| Gold | Analytics | Agregado | Materialized View | Business Logic |
 
 ---
 
@@ -326,9 +326,9 @@ Implementação de pipeline declarativo usando Spark Declarative Pipelines (SDP)
 │  my_transformation.py                                            │
 │                                                                  │
 │  Contém:                                                         │
-│  - Bronze table definitions                                      │
-│  - Silver transformations                                        │
-│  - Gold aggregations                                             │
+│  - Bronze: Streaming Table (ingestão via Auto Loader)                                      │
+│  - Silver: Materialized View (limpeza e validação)                                        │
+│  - Gold: Materialized View (agregações analytics)                                             │
 │  - Data quality expectations                                     │
 └──────────────────────────────────────────────────────────────────┘
 
@@ -404,9 +404,9 @@ Exemplos de orquestração de pipelines usando Spark Declarative Pipelines com n
 ```
 
 **Notebooks:**
-- \`Notebook_Bronze_SDP\` - Definições Bronze layer
-- \`Notebook_Silver_SDP\` - Transformações Silver layer
-- \`Notebook_Gold_SDP\` - Agregações Gold layer
+- \`Notebook_Bronze_SDP\` - Streaming Table (Bronze layer - ingestão via Auto Loader)
+- \`Notebook_Silver_SDP\` - Materialized View (Silver layer - transformações e validação)
+- \`Notebook_Gold_SDP\` - Materialized View (Gold layer - agregações analytics)
 
 **Padrão de Orquestração:**
 
