@@ -223,7 +223,7 @@ Conjunto de exercícios e práticas do treinamento oficial Databricks focado em 
 **Módulos:**
 
 #### 3.1 Delta Lake Fundamentals
-**Pasta:** `01 - Delta Lake Fundamentals/`
+**Diretório:** `01 - Delta Lake Fundamentals/`
 
 Conceitos abordados:
 - ACID Transactions
@@ -233,7 +233,7 @@ Conceitos abordados:
 - Vacuum e gerenciamento de storage
 
 #### 3.2 Ingestion Techniques
-**Pasta:** `02 - Ingestion Techniques/`
+**Diretório:** `02 - Ingestion Techniques/`
 
 Técnicas implementadas:
 - Auto Loader para ingestão incremental
@@ -242,7 +242,7 @@ Técnicas implementadas:
 - File format handling (CSV, JSON, Parquet)
 
 #### 3.3 Medallion Architecture
-**Pasta:** `Medallion Architecture/`
+**Diretório:** `Medallion Architecture/`
 
 **Fluxo de Dados:**
 
@@ -288,12 +288,12 @@ Técnicas implementadas:
 ```
 
 #### 3.4 Pipeline Bronze-Silver-Gold SDP
-**Pasta:** `Pipeline_bronze_silver_gold_sdp/`
+**Diretório:** `Pipeline_bronze_silver_gold_sdp/`
 
 Pipeline declarativo completo implementando Medallion com Spark Declarative Pipelines.
 
 #### 3.5 Orchestration
-**Pasta:** `Orchestration/`
+**Diretório:** `Orchestration/`
 
 Conceitos de orquestração:
 - Databricks Jobs

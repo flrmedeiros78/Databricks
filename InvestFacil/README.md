@@ -36,7 +36,7 @@ O pipeline segue a arquitetura Medallion com 3 camadas:
 ### Export (JSON)
 - **Notebook**: `04_Export_JSON_S3.ipynb`
 - **Formato**: JSON para consumo web
-- **Destino**: Pasta `InvestFacilWeb/`
+- **Destino**: Diretório `InvestFacilWeb/`
 
 ## Job Diário
 

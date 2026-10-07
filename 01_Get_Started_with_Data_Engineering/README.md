@@ -23,7 +23,7 @@ Módulo de treinamento oficial Databricks focado em fundamentos de Engenharia de
 │   ├── Notebook_Employes_Bronze
 │   └── Notebook_Employes_Silver_Gold
 ├── Pipeline_bronze_silver_gold_sdp/
-│   (pipeline configurado para usar os notebooks da pasta Orchestration/)
+│   (pipeline configurado para usar os notebooks do diretório Orchestration/)
 └── Orchestration/
     ├── Notebook_Bronze_SDP
     ├── Notebook_Silver_SDP
@@ -36,7 +36,7 @@ Módulo de treinamento oficial Databricks focado em fundamentos de Engenharia de
 
 ### 1. Delta Lake Fundamentals
 
-**Pasta:** \`01 - Delta Lake Fundamentals/\`
+**Diretório:** \`01 - Delta Lake Fundamentals/\`
 
 **Descrição:**  
 Fundamentos do Delta Lake, o formato de armazenamento open-source que traz confiabilidade para Data Lakes.
@@ -112,7 +112,7 @@ VACUUM employees RETAIN 168 HOURS;
 
 ### 2. Ingestion Techniques
 
-**Pasta:** \`02 - Ingestion Techniques/\`
+**Diretório:** \`02 - Ingestion Techniques/\`
 
 **Descrição:**  
 Técnicas modernas de ingestão de dados para o Lakehouse.
@@ -201,7 +201,7 @@ FROM STREAM read_files(
 
 ### 3. Medallion Architecture
 
-**Pasta:** \`Medallion Architecture/\`
+**Diretório:** \`Medallion Architecture/\`
 
 **Descrição:**  
 Implementação prática da arquitetura Medallion (Bronze-Silver-Gold) com dados de funcionários.
@@ -298,7 +298,7 @@ Implementação prática da arquitetura Medallion (Bronze-Silver-Gold) com dados
 
 ### 4. Pipeline Bronze-Silver-Gold SDP
 
-**Pasta:** \`Pipeline_bronze_silver_gold_sdp/\`
+**Diretório:** \`Pipeline_bronze_silver_gold_sdp/\`
 
 **Descrição:**  
 Implementação de pipeline declarativo usando Spark Declarative Pipelines (SDP) - Databricks Lakeflow.
@@ -322,7 +322,7 @@ Implementação de pipeline declarativo usando Spark Declarative Pipelines (SDP)
 └──────────────────────────────────────────────────────────────────┘
 
 ┌──────────────────────────────────────────────────────────────────┐
-│  Libraries (Notebooks da pasta Orchestration/)                   │
+│  Libraries (Notebooks do diretório Orchestration/)                   │
 │  ──────────────────────────────────────────────────────────────  │
 │                                                                  │
 │  📒 Notebook_Bronze_SDP                                          │
@@ -364,7 +364,7 @@ Implementação de pipeline declarativo usando Spark Declarative Pipelines (SDP)
 
 ### 5. Orchestration
 
-**Pasta:** \`Orchestration/\`
+**Diretório:** \`Orchestration/\`
 
 **Descrição:**  
 Exemplos de orquestração de pipelines usando Spark Declarative Pipelines com notebooks separados por camada.
@@ -586,7 +586,7 @@ DESCRIBE EXTENDED table_name;
 
 4. **Pipeline SDP**
    ```
-   Pipeline ja configurado no Lakeflow apontando para os 3 notebooks da pasta Orchestration/
+   Pipeline ja configurado no Lakeflow apontando para os 3 notebooks do diretório Orchestration/
    Executar pipeline pelo editor (botao Start/Run)
    ```
 
