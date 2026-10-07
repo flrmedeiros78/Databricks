@@ -6,6 +6,46 @@ Pipeline de dados para ingestao e processamento de acoes da B3 com calculo de in
 
 O pipeline segue a arquitetura Medallion com 3 camadas + exportacao:
 
+```mermaid
+flowchart TD
+    API[("Yahoo Finance<br/>API")]
+    JOB["Databricks Job<br/>InvestFacil_Pipeline_Diario"]
+    
+    BRONZE["Bronze<br/>Ingestão"]
+    SILVER["Silver<br/>Transformação"]
+    GOLD["Gold<br/>Indicadores"]
+    EXPORT["Export<br/>JSON + Push"]
+    GITHUB["GitHub<br/>InvestFacilWeb"]
+    WEB(("Aplicação<br/>Web"))
+    
+    UC_BRONZE[/"Unity Catalog<br/>bronze.raw_quotes<br/>bronze.raw_fundamentals"/]
+    UC_SILVER[/"Unity Catalog<br/>silver.cotacoes<br/>silver.fundamentos"/]
+    UC_GOLD[/"Unity Catalog<br/>gold.indicadores_completos<br/>gold.cotacoes_historico"/]
+    
+    API -->|"866 ações<br/>cotações + fundamentos"| JOB
+    JOB -->|"Tarefa 1<br/>107s"| BRONZE
+    BRONZE -->|"grava"| UC_BRONZE
+    BRONZE -->|"Tarefa 2<br/>42s"| SILVER
+    SILVER -->|"grava"| UC_SILVER
+    SILVER -->|"Tarefa 3<br/>26s"| GOLD
+    GOLD -->|"grava"| UC_GOLD
+    GOLD -->|"Tarefa 4<br/>14s"| EXPORT
+    EXPORT -->|"3 arquivos JSON<br/>REST API"| GITHUB
+    GITHUB -->|"Netlify<br/>deploy automático"| WEB
+    
+    style API fill:#b3e5fc,stroke:#0288d1,stroke-width:2px
+    style JOB fill:#e1bee7,stroke:#8e24aa,stroke-width:2px
+    style BRONZE fill:#8d6e63,color:#fff,stroke:#5d4037,stroke-width:2px
+    style SILVER fill:#bdbdbd,color:#333,stroke:#757575,stroke-width:2px
+    style GOLD fill:#ffd54f,color:#333,stroke:#f57f17,stroke-width:2px
+    style EXPORT fill:#81c784,color:#fff,stroke:#388e3c,stroke-width:2px
+    style GITHUB fill:#81c784,color:#fff,stroke:#388e3c,stroke-width:2px
+    style WEB fill:#81c784,color:#fff,stroke:#388e3c,stroke-width:2px
+    style UC_BRONZE fill:#bbdefb,stroke:#1976d2,stroke-width:2px
+    style UC_SILVER fill:#bbdefb,stroke:#1976d2,stroke-width:2px
+    style UC_GOLD fill:#bbdefb,stroke:#1976d2,stroke-width:2px
+```
+
 ### Bronze (Ingestao)
 - **Notebook**: `01_Bronze_Ingestao_B3.py`
 - **Fonte**: Yahoo Finance API (yfinance) + brapi.dev
