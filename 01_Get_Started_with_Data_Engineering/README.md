@@ -326,9 +326,9 @@ Implementação de pipeline declarativo usando Spark Declarative Pipelines (SDP)
 │  my_transformation.py                                            │
 │                                                                  │
 │  Contém:                                                         │
-│  - Bronze: Streaming Table (ingestão via Auto Loader)                                      │
-│  - Silver: Materialized View (limpeza e validação)                                        │
-│  - Gold: Materialized View (agregações analytics)                                             │
+│  - Bronze: Streaming Table (Auto Loader)                        │
+│  - Silver: Materialized View (limpeza e validação)               │
+│  - Gold: Materialized View (agregações analytics)                │
 │  - Data quality expectations                                     │
 └──────────────────────────────────────────────────────────────────┘
 
