@@ -281,69 +281,71 @@ print(f"\n[INFO] Arquivos disponiveis para download e deploy no Netlify")
 
 # COMMAND ----------
 
-# DBTITLE 1,Push JSONs para GitHub (InvestFacilWeb/Import-Json-InvestFacil) via clone+push
-# 7. Enviar JSONs para o repositório InvestFacilWeb no GitHub
-# Método: clone do repo, cópia dos JSONs, commit e push (funciona no compute do job)
-import subprocess
-import shutil
-import os
+# DBTITLE 1,Push JSONs para GitHub via REST API
+# 7. Enviar JSONs para o repositório InvestFacilWeb no GitHub via REST API
+# Autenticação: Databricks Secret (scope="investfacil", key="github_token")
+import base64
+import requests
 
-print("\n[INFO] Enviando JSONs para GitHub (InvestFacilWeb/Import-Json-InvestFacil)...")
+print("\n[INFO] Enviando JSONs para GitHub via REST API...")
 
-repo_dir = "/tmp/InvestFacilWeb_push"
-if os.path.exists(repo_dir):
-    shutil.rmtree(repo_dir)
+GITHUB_OWNER = "flrmedeiros78"
+GITHUB_REPO = "InvestFacilWeb"
+GITHUB_BRANCH = "main"
+GITHUB_FOLDER = "Import-Json-InvestFacil"
 
-# Clonar o repo InvestFacilWeb
-clone = subprocess.run(
-    ["git", "clone", "https://github.com/flrmedeiros78/InvestFacilWeb.git", repo_dir],
-    capture_output=True, text=True, timeout=60
-)
+# Obter token do Databricks Secret
+try:
+    GITHUB_TOKEN = dbutils.secrets.get(scope="investfacil", key="github_token")
+    print(f"[OK] Token obtido do secret investfacil/github_token ({len(GITHUB_TOKEN)} chars)")
+except Exception as e:
+    GITHUB_TOKEN = None
+    print(f"[ERROR] Token não encontrado: {e}")
 
-if clone.returncode == 0:
-    print("[OK] Repo InvestFacilWeb clonado")
-
-    # Criar pasta Import-Json-InvestFacil se não existir
-    target_dir = os.path.join(repo_dir, "Import-Json-InvestFacil")
-    os.makedirs(target_dir, exist_ok=True)
-
-    # Copiar JSONs do workspace para o repo clonado
+if GITHUB_TOKEN:
+    headers = {
+        "Authorization": f"token {GITHUB_TOKEN}",
+        "Accept": "application/vnd.github.v3+json",
+        "X-GitHub-Api-Version": "2022-11-28"
+    }
+    
+    success_count = 0
     for filename in ["indicadores.json", "historico.json", "metadata.json"]:
-        src = f"file:{EXPORT_PATH}{filename}"
-        dst = os.path.join(target_dir, filename)
         try:
-            dbutils.fs.cp(src, f"file:{dst}")
-            print(f"  [OK] {filename} copiado")
+            file_path = f"file:{EXPORT_PATH}{filename}"
+            file_content = dbutils.fs.head(file_path)
+            content_b64 = base64.b64encode(file_content.encode("utf-8")).decode("utf-8")
+            
+            api_url = f"https://api.github.com/repos/{GITHUB_OWNER}/{GITHUB_REPO}/contents/{GITHUB_FOLDER}/{filename}"
+            resp_get = requests.get(api_url, headers=headers, params={"ref": GITHUB_BRANCH})
+            
+            payload = {
+                "message": f"Atualiza {filename} - Pipeline InvestFacil - {data_hora_sp.strftime('%Y-%m-%d %H:%M')}",
+                "content": content_b64,
+                "branch": GITHUB_BRANCH
+            }
+            
+            if resp_get.status_code == 200:
+                payload["sha"] = resp_get.json()["sha"]
+                action = "UPDATE"
+            else:
+                action = "CREATE"
+            
+            resp_put = requests.put(api_url, headers=headers, json=payload)
+            
+            if resp_put.status_code in (200, 201):
+                print(f"  [{action}] {filename} -> GitHub OK ({resp_put.status_code})")
+                success_count += 1
+            else:
+                print(f"  [ERROR] {filename}: {resp_put.status_code} - {resp_put.text[:200]}")
         except Exception as e:
-            print(f"  [WARN] {filename}: {e}")
-
-    # Configurar git
-    subprocess.run(["git", "config", "user.name", "fabiolrm78"], cwd=repo_dir, capture_output=True)
-    subprocess.run(["git", "config", "user.email", "fabiolrm78@gmail.com"], cwd=repo_dir, capture_output=True)
-
-    # Adicionar, commitar e pushar
-    subprocess.run(["git", "add", "Import-Json-InvestFacil/"], cwd=repo_dir, capture_output=True)
-    commit = subprocess.run(
-        ["git", "commit", "-m", f"Atualiza JSONs do pipeline InvestFacil - {data_hora_sp.strftime('%Y-%m-%d %H:%M')}"],
-        cwd=repo_dir, capture_output=True, text=True
-    )
-
-    if commit.returncode == 0 or "nothing to commit" in commit.stderr:
-        push = subprocess.run(
-            ["git", "push", "origin", "main"],
-            cwd=repo_dir, capture_output=True, text=True, timeout=60
-        )
-        if push.returncode == 0:
-            print("[SUCCESS] JSONs enviados para GitHub!")
-            print(f"[INFO] https://github.com/flrmedeiros78/InvestFacilWeb/tree/main/Import-Json-InvestFacil")
-        else:
-            print(f"[WARN] Push falhou: {push.stderr}")
+            print(f"  [ERROR] {filename}: {e}")
+    
+    if success_count == 3:
+        print(f"\n[SUCCESS] 3/3 JSONs enviados para GitHub!")
     else:
-        print(f"[INFO] Nenhuma alteração para commitar: {commit.stdout}")
-
-    # Limpar
-    shutil.rmtree(repo_dir)
+        print(f"\n[WARN] {success_count}/3 arquivos enviados")
 else:
-    print(f"[ERROR] Falha ao clonar repo: {clone.stderr}")
+    print("[INFO] JSONs gravados apenas no Workspace (sem push para GitHub)")
 
 print("\n[DONE] Pipeline InvestFacil concluído!")
