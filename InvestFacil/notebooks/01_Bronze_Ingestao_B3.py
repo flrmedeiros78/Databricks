@@ -83,6 +83,8 @@ def fetch_ticker_data(ticker_symbol, max_retries=3):
             info = ticker.info
             fundamental_data = {
                 'symbol': ticker_symbol,
+                'shortName': info.get('shortName'),
+                'longName': info.get('longName'),
                 'marketCap': info.get('marketCap'),
                 'peRatio': info.get('trailingPE'),
                 'dividendYield': info.get('dividendYield'),

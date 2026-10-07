@@ -32,7 +32,7 @@ from pyspark.sql.functions import col, to_json, struct, collect_list
 
 # Configurações de Export (Unity Catalog Volume)
 # Nota: Para usar S3, configure as credenciais AWS no cluster primeiro
-EXPORT_PATH = "/Workspace/Users/fabiolrm78@gmail.com/Databricks/InvestFacilWeb/"
+EXPORT_PATH = "/Workspace/Users/fabiolrm78@gmail.com/InvestFacilWeb/"
 
 # Criar diretório de export se não existir
 try:
@@ -125,10 +125,17 @@ print(f"[OK] JSON de historico gerado ({len(historico_json)} bytes)")
 # 4. Criar arquivo de metadata com informacoes do pipeline
 print("\n[INFO] Criando metadata...")
 
+import pytz
+from datetime import datetime
+
+# Usar timezone de São Paulo (BRT/BRST)
+tz_sp = pytz.timezone('America/Sao_Paulo')
+data_hora_sp = datetime.now(tz_sp)
+
 metadata = {
     "projeto": "InvestFacil",
     "versao": "1.0",
-    "ultima_atualizacao": datetime.now().isoformat(),
+    "ultima_atualizacao": data_hora_sp.strftime("%Y-%m-%d %H:%M:%S %Z"),
     "fonte_dados": "brapi.dev",
     "bolsas": ["B3"],
     "total_acoes": df_indicadores.count(),

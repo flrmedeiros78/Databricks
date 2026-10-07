@@ -1,4 +1,8 @@
 # Databricks notebook source
+# /// script
+# [tool.databricks.environment]
+# environment_version = "5"
+# ///
 # DBTITLE 1,Título e Descrição
 # MAGIC %md
 # MAGIC # 03 - Camada Gold - Indicadores para InvestFacil
@@ -189,9 +193,10 @@ df_gold = df_gold \
     .withColumn("retorno_patrimonio_roe", spark_round("retorno_patrimonio_roe", 4)) \
     .withColumn("dividend_yield", spark_round("dividend_yield", 4)) \
     .withColumn("volatilidade", spark_round("volatilidade", 4)) \
-    .withColumn("momentum_30d", spark_round("momentum_30d", 2))
+    .withColumn("momentum_30d", spark_round("momentum_30d", 2)) \
+    .dropDuplicates(["ticker"])
 
-print(f"[OK] Indicadores consolidados: {df_gold.count()} acoes")
+print(f"[OK] Indicadores consolidados: {df_gold.count()} acoes unicas")
 
 # COMMAND ----------
 
