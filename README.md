@@ -17,24 +17,45 @@ Telefone: (21) 99663-7177
 
 Todos os projetos seguem práticas modernas de engenharia de dados:
 
-```
-┌─────────────────────────────────────────────────────────────────┐
-│                    DATABRICKS LAKEHOUSE                         │
-├─────────────────────────────────────────────────────────────────┤
-│                                                                 │
-│  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐        │
-│  │   BRONZE     │  │    SILVER    │  │     GOLD     │        │
-│  │   (Raw)      │─→│(Transformed) │─→│ (Aggregated) │        │
-│  └──────────────┘  └──────────────┘  └──────────────┘        │
-│                                                                 │
-│  ┌────────────────────────────────────────────────────────┐   │
-│  │           DELTA LAKE + UNITY CATALOG                   │   │
-│  └────────────────────────────────────────────────────────┘   │
-│                                                                 │
-│  ┌────────────────────────────────────────────────────────┐   │
-│  │      SPARK DECLARATIVE PIPELINES (LAKEFLOW)            │   │
-│  └────────────────────────────────────────────────────────┘   │
-└─────────────────────────────────────────────────────────────────┘
+```mermaid
+flowchart TD
+    SOURCE[("Fontes de Dados<br/>APIs, CSV, Databases")]
+    LOADER["Auto Loader<br/>Databricks"]
+    
+    BRONZE["Bronze<br/>Dados Brutos"]
+    SILVER["Silver<br/>Transformado"]
+    GOLD["Gold<br/>Agregado"]
+    
+    ANALYTICS["Analytics<br/>Dashboards & SQL"]
+    
+    DELTA[/"Delta Lake<br/>ACID Storage"/]
+    UC[/"Unity Catalog<br/>Governança"/]
+    LAKEFLOW[/"Lakeflow Pipelines<br/>Spark Declarative"/]
+    
+    SOURCE -->|"Ingestão"| LOADER
+    LOADER -->|"Raw Data"| BRONZE
+    BRONZE -->|"Transformação"| SILVER
+    SILVER -->|"Agregação"| GOLD
+    GOLD -->|"Consultas"| ANALYTICS
+    
+    BRONZE -.->|"armazena"| DELTA
+    SILVER -.->|"armazena"| DELTA
+    GOLD -.->|"armazena"| DELTA
+    
+    DELTA -.->|"governança"| UC
+    LAKEFLOW -.->|"orquestra"| BRONZE
+    LAKEFLOW -.->|"orquestra"| SILVER
+    LAKEFLOW -.->|"orquestra"| GOLD
+    
+    style SOURCE fill:#b3e5fc,color:#000,stroke:#0288d1,stroke-width:2px
+    style LOADER fill:#DDA0DD,color:#000,stroke:#9370DB,stroke-width:2px
+    style BRONZE fill:#8d6e63,color:#fff,stroke:#5d4037,stroke-width:2px
+    style SILVER fill:#bdbdbd,color:#333,stroke:#757575,stroke-width:2px
+    style GOLD fill:#ffd54f,color:#333,stroke:#f57f17,stroke-width:2px
+    style ANALYTICS fill:#81c784,color:#000,stroke:#388e3c,stroke-width:2px
+    style DELTA fill:#bbdefb,color:#000,stroke:#1976d2,stroke-width:2px
+    style UC fill:#bbdefb,color:#000,stroke:#1976d2,stroke-width:2px
+    style LAKEFLOW fill:#bbdefb,color:#000,stroke:#1976d2,stroke-width:2px
 ```
 
 ---
