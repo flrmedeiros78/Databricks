@@ -227,11 +227,11 @@ flowchart TD
     
     CONFIG["Pipeline Configuration<br/>• Catalog: workspace<br/>• Schema: default<br/>• Target: UC Tables (dbacademy.get_started_de)<br/>• Serverless: Yes | Photon: Yes<br/>• Mode: TRIGGERED"]
     
-    NB_BRONZE["📒 Notebook_Bronze_SDP<br/>• CREATE STREAMING TABLE employes_bronze_sdp<br/>• Ingestão via read_files() de CSV no volume myfiles"]
+    NB_BRONZE["Notebook_Bronze_SDP<br/>• CREATE STREAMING TABLE employes_bronze_sdp<br/>• Ingestão via read_files() de CSV no volume myfiles"]
     
-    NB_SILVER["📒 Notebook_Silver_SDP<br/>• CREATE MATERIALIZED VIEW employes_silver_sdp<br/>• Validações: ID NOT NULL, FirstName NOT NULL<br/>• Transformações: UPPER(FirstName), UPPER(Country), UPPER(Role)<br/>• Colunas de auditoria: dt_procs_timestamp, dt_procs"]
+    NB_SILVER["Notebook_Silver_SDP<br/>• CREATE MATERIALIZED VIEW employes_silver_sdp<br/>• Validações: ID NOT NULL, FirstName NOT NULL<br/>• Transformações: UPPER(FirstName), UPPER(Country), UPPER(Role)<br/>• Colunas de auditoria: dt_procs_timestamp, dt_procs"]
     
-    NB_GOLD["📒 Notebook_Gold_SDP<br/>• CREATE MATERIALIZED VIEW employes_gold_sdp<br/>• Agregação: contagem de funcionários por Role"]
+    NB_GOLD["Notebook_Gold_SDP<br/>• CREATE MATERIALIZED VIEW employes_gold_sdp<br/>• Agregação: contagem de funcionários por Role"]
     
     EXEC["PIPELINE EXECUTION<br/>1. Parse definitions<br/>2. Build DAG<br/>3. Execute dependencies<br/>4. Monitor & log"]
     
