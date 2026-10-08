@@ -258,9 +258,6 @@ flowchart TD
 - Monitoramento integrado
 - Lineage tracking
 
-**Componentes:**
-- \`transformations/my_transformation.py\` - Definições de tabelas e transformações
-
 ---
 
 ### 5. Orchestration
