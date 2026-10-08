@@ -300,14 +300,19 @@ else:
 
 # DBTITLE 1,Notas de Implementação
 # MAGIC %md
-# MAGIC ## ✅ Pipeline de Ingestão Pronta!
+# MAGIC ##  Pipeline de Ingestão Pronta!
+# # MAGIC ## ✅ Pipeline de Ingestão Pronta!
 # MAGIC
-# MAGIC ### 🎯 O que foi implementado:
+# MAGIC ###  O que foi implementado:
+# # MAGIC ### 🎯 O que foi implementado:
 # MAGIC
 # MAGIC 1. **API Yahoo Finance (yfinance)**
-# MAGIC    - ✅ Sem necessidade de API key
-# MAGIC    - ✅ Dados gratuitos e confiáveis
-# MAGIC    - ✅ Cotações em tempo real + dados fundamentalistas
+# MAGIC    -  Sem necessidade de API key
+# # MAGIC    - ✅ Sem necessidade de API key
+# MAGIC    -  Dados gratuitos e confiáveis
+# # MAGIC    - ✅ Dados gratuitos e confiáveis
+# MAGIC    -  Cotações em tempo real + dados fundamentalistas
+# # MAGIC    - ✅ Cotações em tempo real + dados fundamentalistas
 # MAGIC
 # MAGIC 2. **Dados Capturados**
 # MAGIC    - **Cotações**: preço, abertura, máxima, mínima, volume
@@ -318,14 +323,20 @@ else:
 # MAGIC    - Schema evolution habilitado
 # MAGIC    - Auditoria completa (timestamp, source, ticker)
 # MAGIC
-# MAGIC ### 🚀 Próximos Passos:
+# MAGIC ###  Próximos Passos:
+# # MAGIC ### 🚀 Próximos Passos:
 # MAGIC
 # MAGIC 1. **Executar job completo**: O job está configurado para rodar às 19h diariamente
 # MAGIC 2. **Expandir tickers**: Adicione mais ações na célula 4 conforme necessário
 # MAGIC 3. **Camada Silver**: Os notebooks 02_Silver e 03_Gold já estão prontos para processar esses dados
 # MAGIC
-# MAGIC ### ⚡ Melhorias vs. HG Brasil:
-# MAGIC - ❌ HG Brasil: Requer API key paga para dados históricos robustos
-# MAGIC - ✅ Yahoo Finance: Gratuito, sem limites rígidos de rate
-# MAGIC - ✅ Instalação automática da biblioteca yfinance
-# MAGIC - ✅ Retry automático com backoff exponencial
+# MAGIC ###  Melhorias vs. HG Brasil:
+# # MAGIC ### ⚡ Melhorias vs. HG Brasil:
+# MAGIC -  HG Brasil: Requer API key paga para dados históricos robustos
+# # MAGIC - ❌ HG Brasil: Requer API key paga para dados históricos robustos
+# MAGIC -  Yahoo Finance: Gratuito, sem limites rígidos de rate
+# # MAGIC - ✅ Yahoo Finance: Gratuito, sem limites rígidos de rate
+# MAGIC -  Instalação automática da biblioteca yfinance
+# # MAGIC - ✅ Instalação automática da biblioteca yfinance
+# MAGIC -  Retry automático com backoff exponencial
+# # MAGIC - ✅ Retry automático com backoff exponencial

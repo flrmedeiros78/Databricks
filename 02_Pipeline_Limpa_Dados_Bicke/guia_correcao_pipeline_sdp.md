@@ -9,25 +9,25 @@
 
 ```
 Pipeline falha
-    ↓
+ ↓
 Passo 1: Ler o event log → identificar tipo de erro
-    ↓
+ ↓
 Erro de infraestrutura? → Passo 2: Liberar compute serverless
-    ↓
+ ↓
 Erro de código? → Passo 3: Verificar sintaxe obsoleta
-    ↓
-                 Passo 3b: Remover instruções não-DLT
-    ↓
-                 Passo 4: Adicionar STREAM() no read_files()
-    ↓
+ ↓
+ Passo 3b: Remover instruções não-DLT
+ ↓
+ Passo 4: Adicionar STREAM() no read_files()
+ ↓
 Passo 5: Validar com dry run
-    ↓
-    Falhou? → Voltar ao Passo 3/4
-    Passou? → Passo 6: Executar pipeline
-    ↓
+ ↓
+ Falhou? → Voltar ao Passo 3/4
+ Passou? → Passo 6: Executar pipeline
+ ↓
 Passo 7: Verificar resultados
-    ↓
-✅ Concluído
+ ↓
+ Concluído
 ```
 
 ---
@@ -69,12 +69,12 @@ Stop or delete existing serverless compute to free up capacity.
 1. **Verificar recursos ativos** — liste os SQL warehouses e compute serverless do workspace
 2. **Parar recursos desnecessários** — se houver um SQL warehouse serverless rodando, pare-o:
 
-   ```python
-   from databricks.sdk import WorkspaceClient
-   w = WorkspaceClient()
-   w.warehouses.stop(id="<warehouse_id>")
-   print("Warehouse parado com sucesso")
-   ```
+ ```python
+ from databricks.sdk import WorkspaceClient
+ w = WorkspaceClient()
+ w.warehouses.stop(id="<warehouse_id>")
+ print("Warehouse parado com sucesso")
+ ```
 
 3. **Tentar novamente** — depois de liberar recursos, execute um dry run novamente
 
@@ -98,7 +98,7 @@ DLT currently accepts 'CREATE MATERIALIZED VIEW', 'CREATE STREAMING TABLE',
 
 O SDP (antigo DLT) não aceita mais a sintaxe antiga:
 
-| ❌ Obsoleto (DLT) | ✅ Atual (SDP) |
+| Obsoleto (DLT) | Atual (SDP) |
 | --- | --- |
 | `CREATE OR REFRESH STREAMING LIVE TABLE` | `CREATE OR REFRESH STREAMING TABLE` |
 | `CREATE OR REFRESH LIVE VIEW` | `CREATE OR REFRESH MATERIALIZED VIEW` |
@@ -114,13 +114,13 @@ O SDP (antigo DLT) não aceita mais a sintaxe antiga:
 
 ### Exemplo prático
 
-❌ **Antes (obsoleto):**
+ **Antes (obsoleto):**
 ```sql
 CREATE OR REFRESH STREAMING LIVE TABLE tb_bronze_bike_eventos
 AS SELECT * FROM LIVE.outra_tabela;
 ```
 
-✅ **Depois (correto):**
+ **Depois (correto):**
 ```sql
 CREATE OR REFRESH STREAMING TABLE tb_bronze_bike_eventos
 AS SELECT * FROM outra_tabela;
@@ -181,31 +181,31 @@ Ao criar uma `STREAMING TABLE` com `read_files()` (Auto Loader), é obrigatório
 usar a palavra-chave `STREAM`. Sem ela, o SDP trata a leitura como batch (lote
 único) e não como streaming incremental.
 
-### ❌ Incorreto
+### Incorreto
 
 ```sql
 CREATE OR REFRESH STREAMING TABLE tb_bronze_bike_eventos
 AS SELECT *
 FROM read_files(
-  '/Volumes/dbacademy/default/raw_data/rides/build_data_pipeline_demo/',
-  format => 'csv',
-  header => 'true',
-  inferSchema => 'true',
-  sep => ','
+ '/Volumes/dbacademy/default/raw_data/rides/build_data_pipeline_demo/',
+ format => 'csv',
+ header => 'true',
+ inferSchema => 'true',
+ sep => ','
 );
 ```
 
-### ✅ Correto
+### Correto
 
 ```sql
 CREATE OR REFRESH STREAMING TABLE tb_bronze_bike_eventos
 AS SELECT *
 FROM STREAM(read_files(
-  '/Volumes/dbacademy/default/raw_data/rides/build_data_pipeline_demo/',
-  format => 'csv',
-  header => 'true',
-  inferSchema => 'true',
-  sep => ','
+ '/Volumes/dbacademy/default/raw_data/rides/build_data_pipeline_demo/',
+ format => 'csv',
+ header => 'true',
+ inferSchema => 'true',
+ sep => ','
 ));
 ```
 
@@ -234,9 +234,9 @@ Após cada correção de código, **sempre valide** antes de executar:
 Após o dry run passar:
 
 1. Inicie uma **atualização regular** (`fullRefresh: false`) — o pipeline criará as
-   tabelas se não existirem
+ tabelas se não existirem
 2. Se as tabelas já existirem com dados corrompidos ou esquema incompatível, use
-   **full refresh** (`fullRefresh: true`) — mas atenção: isso apaga e recria tudo
+ **full refresh** (`fullRefresh: true`) — mas atenção: isso apaga e recria tudo
 3. Monitore a execução até o status **COMPLETED**
 
 ---

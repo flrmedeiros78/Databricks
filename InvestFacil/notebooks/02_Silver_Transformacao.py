@@ -180,8 +180,10 @@ MAPEAMENTO_SETORES = {
     'Technology': 'Tecnologia',
 }
 
-print(f"✅ Mapeamento carregado: {len(MAPEAMENTO_NOMES)} empresas")
-print(f"✅ Tradução de setores: {len(MAPEAMENTO_SETORES)} setores")
+print(f" Mapeamento carregado: {len(MAPEAMENTO_NOMES)} empresas")
+# print(f"✅ Mapeamento carregado: {len(MAPEAMENTO_NOMES)} empresas")
+print(f" Tradução de setores: {len(MAPEAMENTO_SETORES)} setores")
+# print(f"✅ Tradução de setores: {len(MAPEAMENTO_SETORES)} setores")
 
 # COMMAND ----------
 
@@ -319,7 +321,8 @@ df_fundamentos_silver = df_raw_fundamentals \
     ) \
     .dropDuplicates(["ticker", "data_ingestao"])
 
-print(f"✅ {df_fundamentos_silver.count()} fundamentos transformados com nomes e setores em português")
+print(f" {df_fundamentos_silver.count()} fundamentos transformados com nomes e setores em português")
+# print(f"✅ {df_fundamentos_silver.count()} fundamentos transformados com nomes e setores em português")
 
 # COMMAND ----------
 
