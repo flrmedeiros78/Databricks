@@ -33,163 +33,32 @@ Este projeto demonstra a implementação de um pipeline moderno de engenharia de
 
 
 
-```
-┌─────────────────────────────────────────────────────────────────────────────┐
-│                   PIPELINE BIKE SHARE CHICAGO                               │
-│                 DATABRICKS LAKEFLOW (SPARK DECLARATIVE PIPELINES)           │
-└─────────────────────────────────────────────────────────────────────────────┘
+```mermaid
+flowchart TD
+    TITLE["PIPELINE BIKE SHARE CHICAGO<br/>Databricks Lakeflow (Spark Declarative Pipelines)"]
 
-                           ┌──────────────────────┐
-                           │   UC VOLUME          │
-                           │  /Volumes/dbacademy/ │
-                           │  default/raw_data/   │
-                           │  rides/*.csv         │
-                           └──────────┬───────────┘
-                                      │
-                                      │ Auto Loader
-                                      │ (read_files)
-                                      │ Streaming Ingestion
-                                      ▼
-┌─────────────────────────────────────────────────────────────────────────────┐
-│                          BRONZE LAYER                                       │
-│  tb_bronze_bike_eventos                                                     │
-│  ─────────────────────────────────────────────────────────────────────────  │
-│  Tipo: STREAMING TABLE                                                      │
-│  Função: Ingestão incremental de dados brutos                               │
-│  Notebook: 01-Notebook_SQL_bronze_bike_eventos                              │
-│                                                                             │
-│  Características:                                                           │
-│  - Dados raw sem transformação                                              │
-│  - Auto Loader para detecção automática de novos arquivos                   │
-│  - Schema inference automático                                              │
-│  - Processamento streaming contínuo                                         │
-│  - Checkpoint automático para exatamente-uma-vez                            │
-│                                                                             │
-│  Schema Original:                                                           │
-│  ┌─────────────────────┬──────────────┬─────────────────────────────────┐  │
-│  │ Campo               │ Tipo         │ Descrição                       │  │
-│  ├─────────────────────┼──────────────┼─────────────────────────────────┤  │
-│  │ ride_id             │ STRING       │ ID único da viagem              │  │
-│  │ start_time          │ TIMESTAMP    │ Data/hora de início             │  │
-│  │ end_time            │ TIMESTAMP    │ Data/hora de término            │  │
-│  │ start_station_id    │ STRING       │ ID estação de partida           │  │
-│  │ end_station_id      │ STRING       │ ID estação de chegada           │  │
-│  │ bike_id             │ STRING       │ ID da bicicleta                 │  │
-│  │ user_type           │ STRING       │ Tipo: member ou casual          │  │
-│  └─────────────────────┴──────────────┴─────────────────────────────────┘  │
-└──────────────────────────────────┬──────────────────────────────────────────┘
-                                   │
-                                   │ Stream Processing
-                                   │ Transformações de Negócio
-                                   ▼
-┌─────────────────────────────────────────────────────────────────────────────┐
-│                          SILVER LAYER                                       │
-│  tb_silver_bike_eventos                                                     │
-│  ─────────────────────────────────────────────────────────────────────────  │
-│  Tipo: STREAMING TABLE                                                      │
-│  Função: Dados limpos, validados e enriquecidos                             │
-│  Notebook: 02-Notebook_SQL_silver_bike_eventos                              │
-│                                                                             │
-│  Transformações Aplicadas:                                                  │
-│  ─────────────────────────────────────────────────────────────────────────  │
-│                                                                             │
-│  1. EXTRAÇÃO DE DATA DA VIAGEM                                              │
-│     - ride_date = TO_DATE(start_time)                                       │
-│     - Facilita agregações temporais                                         │
-│                                                                             │
-│  2. CÁLCULO DE RECEITA POR VIAGEM                                           │
-│     - Duração em horas = datediff(minute, start_time, end_time) / 60.0     │
-│     - Member: R$ 10.00/hora                                                 │
-│     - Casual:  R$ 15.00/hora                                                │
-│     - ride_revenue = duration * rate                                        │
-│     - Tipo: DECIMAL(19,4) para precisão financeira                          │
-│                                                                             │
-│  3. FILTROS DE QUALIDADE DE DADOS                                           │
-│     - Remove viagens com duração <= 0 minutos                               │
-│     - Garante consistência temporal (end_time > start_time)                 │
-│     - Elimina registros inválidos ou corrompidos                            │
-│                                                                             │
-│  4. TYPE CASTING E PADRONIZAÇÃO                                             │
-│     - Conversão de tipos para análise                                       │
-│     - Padronização de formatos                                              │
-│                                                                             │
-│  Schema Enriquecido:                                                        │
-│  ┌─────────────────────┬──────────────┬─────────────────────────────────┐  │
-│  │ Campo               │ Tipo         │ Descrição                       │  │
-│  ├─────────────────────┼──────────────┼─────────────────────────────────┤  │
-│  │ ride_date           │ DATE         │ Data da viagem (novo)           │  │
-│  │ ride_id             │ STRING       │ ID único da viagem              │  │
-│  │ start_time          │ TIMESTAMP    │ Data/hora de início             │  │
-│  │ end_time            │ TIMESTAMP    │ Data/hora de término            │  │
-│  │ start_station_id    │ STRING       │ ID estação de partida           │  │
-│  │ end_station_id      │ STRING       │ ID estação de chegada           │  │
-│  │ bike_id             │ STRING       │ ID da bicicleta                 │  │
-│  │ user_type           │ STRING       │ Tipo: member ou casual          │  │
-│  │ ride_revenue        │ DECIMAL(19,4)│ Receita calculada (novo)        │  │
-│  └─────────────────────┴──────────────┴─────────────────────────────────┘  │
-└──────────────────────────────────┬──────────────────────────────────────────┘
-                                   │
-                                   │ Aggregation
-                                   │ Business Intelligence
-                                   ▼
-┌─────────────────────────────────────────────────────────────────────────────┐
-│                           GOLD LAYER                                        │
-│  tb_gold_bike_eventos                                                       │
-│  ─────────────────────────────────────────────────────────────────────────  │
-│  Tipo: MATERIALIZED VIEW                                                    │
-│  Função: Agregações diárias por bicicleta para analytics                    │
-│  Notebook: 03-Notebook_SQL_gold_bike_eventos                                │
-│                                                                             │
-│  Agregações Implementadas:                                                  │
-│  ─────────────────────────────────────────────────────────────────────────  │
-│                                                                             │
-│  1. CONTAGEM DE VIAGENS                                                     │
-│     - ride_count = COUNT(DISTINCT ride_id)                                  │
-│     - Viagens únicas por bike_id e ride_date                                │
-│     - Métrica chave para utilização da frota                                │
-│                                                                             │
-│  2. RECEITA TOTAL                                                           │
-│     - total_revenue = SUM(ride_revenue)                                     │
-│     - Receita acumulada por bike por dia                                    │
-│     - DECIMAL(19,4) para precisão financeira                                │
-│                                                                             │
-│  3. PRIMEIRA ESTAÇÃO DO DIA                                                 │
-│     - first_start_station_id = MIN_BY(start_station_id, start_time)        │
-│     - Onde a bicicleta começou o dia                                        │
-│     - Útil para rebalanceamento de frota                                    │
-│                                                                             │
-│  4. ÚLTIMA ESTAÇÃO DO DIA                                                   │
-│     - last_end_station_id = MAX_BY(end_station_id, end_time)               │
-│     - Onde a bicicleta terminou o dia                                       │
-│     - Útil para planejamento de redistribuição                              │
-│                                                                             │
-│  Granularidade: Diária por bicicleta                                        │
-│  Group By: ride_date, bike_id                                               │
-│                                                                             │
-│  Schema Agregado:                                                           │
-│  ┌─────────────────────────┬──────────────┬────────────────────────────┐   │
-│  │ Campo                   │ Tipo         │ Descrição                  │   │
-│  ├─────────────────────────┼──────────────┼────────────────────────────┤   │
-│  │ ride_date               │ DATE         │ Data de agregação          │   │
-│  │ bike_id                 │ STRING       │ ID da bicicleta            │   │
-│  │ ride_count              │ BIGINT       │ Total de viagens           │   │
-│  │ total_revenue           │ DECIMAL(19,4)│ Receita total do dia       │   │
-│  │ first_start_station_id  │ STRING       │ Primeira estação (manhã)   │   │
-│  │ last_end_station_id     │ STRING       │ Última estação (noite)     │   │
-│  └─────────────────────────┴──────────────┴────────────────────────────┘   │
-└──────────────────────────────────┬──────────────────────────────────────────┘
-                                   │
-                                   │ Consumption
-                                   ▼
-                    ┌──────────────────────────────┐
-                    │      ANALYTICS & BI          │
-                    │  ──────────────────────────  │
-                    │  - Dashboards Lakeview       │
-                    │  - SQL Analytics             │
-                    │  - Power BI / Tableau        │
-                    │  - Relatórios Operacionais   │
-                    │  - ML Feature Store          │
-                    └──────────────────────────────┘
+    UC["UC VOLUME<br/>/Volumes/dbacademy/default/raw_data/rides/*.csv"]
+
+    BRONZE["BRONZE LAYER<br/>tb_bronze_bike_eventos<br/>━━━━━━━━━━━━━━━━━━━━<br/>Tipo: STREAMING TABLE<br/>Notebook: 01-Notebook_SQL_bronze_bike_eventos<br/><br/>• Dados raw sem transformação<br/>• Auto Loader para detecção automática<br/>• Schema inference automático<br/>• Processamento streaming contínuo<br/>• Checkpoint automático (exactly-once)"]
+
+    SILVER["SILVER LAYER<br/>tb_silver_bike_eventos<br/>━━━━━━━━━━━━━━━━━━━━<br/>Tipo: STREAMING TABLE<br/>Notebook: 02-Notebook_SQL_silver_bike_eventos<br/><br/>1. Extração de data: ride_date = TO_DATE(start_time)<br/>2. Cálculo de receita: Member R$10/h, Casual R$15/h<br/>3. Filtros de qualidade: duração > 0, end_time > start_time<br/>4. Type casting e padronização"]
+
+    GOLD["GOLD LAYER<br/>tb_gold_bike_eventos<br/>━━━━━━━━━━━━━━━━━━━━<br/>Tipo: MATERIALIZED VIEW<br/>Notebook: 03-Notebook_SQL_gold_bike_eventos<br/><br/>1. ride_count = COUNT(DISTINCT ride_id)<br/>2. total_revenue = SUM(ride_revenue)<br/>3. first_start_station_id = MIN_BY(start_station_id, start_time)<br/>4. last_end_station_id = MAX_BY(end_station_id, end_time)<br/><br/>Granularidade: Diária por bicicleta (ride_date, bike_id)"]
+
+    BI["ANALYTICS & BI<br/>━━━━━━━━━━━━━━━━━━━━<br/>• Dashboards Lakeview<br/>• SQL Analytics<br/>• Power BI / Tableau<br/>• Relatórios Operacionais<br/>• ML Feature Store"]
+
+    TITLE --> UC
+    UC -->|"Auto Loader (read_files)<br/>Streaming Ingestion"| BRONZE
+    BRONZE -->|"Stream Processing<br/>Transformações de Negócio"| SILVER
+    SILVER -->|"Aggregation<br/>Business Intelligence"| GOLD
+    GOLD -->|"Consumption"| BI
+
+    style TITLE fill:#b3e5fc,color:#000,stroke:#0288d1,stroke-width:2px
+    style UC fill:#bbdefb,color:#000,stroke:#1976d2,stroke-width:2px
+    style BRONZE fill:#8d6e63,color:#fff,stroke:#5d4037,stroke-width:2px
+    style SILVER fill:#bdbdbd,color:#333,stroke:#757575,stroke-width:2px
+    style GOLD fill:#ffd54f,color:#333,stroke:#f57f17,stroke-width:2px
+    style BI fill:#81c784,color:#000,stroke:#388e3c,stroke-width:2px
 ```
 
 ---

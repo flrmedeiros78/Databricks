@@ -43,48 +43,25 @@ Fundamentos do Delta Lake, o formato de armazenamento open-source que traz confi
 
 **Conceitos Abordados:**
 
-```
-┌─────────────────────────────────────────────────────────┐
-│              DELTA LAKE FUNDAMENTALS                    │
-└─────────────────────────────────────────────────────────┘
-
-┌──────────────────────┐
-│  ACID Transactions   │
-│  ──────────────────  │
-│  - Atomicity         │
-│  - Consistency       │
-│  - Isolation         │
-│  - Durability        │
-└──────────┬───────────┘
-           │
-           ▼
-┌──────────────────────────────────────────────────────┐
-│  Time Travel                                         │
-│  ──────────────────────────────────────────────────  │
-│  - Query historical versions                         │
-│  - Rollback changes                                  │
-│  - Audit data changes                                │
-│  - Version as of timestamp                           │
-└──────────┬───────────────────────────────────────────┘
-           │
-           ▼
-┌──────────────────────────────────────────────────────┐
-│  Schema Evolution                                    │
-│  ──────────────────────────────────────────────────  │
-│  - Add columns automatically                         │
-│  - Merge schema on write                             │
-│  - Schema enforcement                                │
-└──────────┬───────────────────────────────────────────┘
-           │
-           ▼
-┌──────────────────────────────────────────────────────┐
-│  Optimization                                        │
-│  ──────────────────────────────────────────────────  │
-│  - OPTIMIZE (compaction)                             │
-│  - Z-ORDER (data skipping)                           │
-│  - VACUUM (cleanup)                                  │
-│  - Auto-optimization                                 │
-└──────────────────────────────────────────────────────┘
+```mermaid
+flowchart TD
+    TITLE["DELTA LAKE FUNDAMENTALS"]
+    
+    ACID["ACID Transactions<br/>• Atomicity<br/>• Consistency<br/>• Isolation<br/>• Durability"]
+    TIME["Time Travel<br/>• Query historical versions<br/>• Rollback changes<br/>• Audit data changes<br/>• Version as of timestamp"]
+    SCHEMA["Schema Evolution<br/>• Add columns automatically<br/>• Merge schema on write<br/>• Schema enforcement"]
+    OPT["Optimization<br/>• OPTIMIZE (compaction)<br/>• Z-ORDER (data skipping)<br/>• VACUUM (cleanup)<br/>• Auto-optimization"]
+    
+    TITLE --> ACID
+    ACID --> TIME
+    TIME --> SCHEMA
+    SCHEMA --> OPT
+    
+    style TITLE fill:#b3e5fc,color:#000,stroke:#0288d1,stroke-width:2px
+    style ACID fill:#e8f5e9,color:#000,stroke:#388e3c,stroke-width:2px
+    style TIME fill:#e8f5e9,color:#000,stroke:#388e3c,stroke-width:2px
+    style SCHEMA fill:#e8f5e9,color:#000,stroke:#388e3c,stroke-width:2px
+    style OPT fill:#e8f5e9,color:#000,stroke:#388e3c,stroke-width:2px
 ```
 
 **Notebooks:**
@@ -119,39 +96,28 @@ Técnicas modernas de ingestão de dados para o Lakehouse.
 
 **Fluxo de Ingestão:**
 
-```
-┌─────────────────────────────────────────────────────────────┐
-│               INGESTION TECHNIQUES                          │
-└─────────────────────────────────────────────────────────────┘
-
-┌──────────────────┐       ┌──────────────────┐
-│  Source Systems  │       │   File Storage   │
-│  ──────────────  │       │  ──────────────  │
-│  - Databases     │       │  - S3/ADLS/GCS   │
-│  - APIs          │       │  - UC Volumes    │
-│  - Streams       │       │  - DBFS          │
-└────────┬─────────┘       └────────┬─────────┘
-         │                          │
-         │                          │
-         └──────────┬───────────────┘
-                    │
-                    ▼
-         ┌──────────────────────────┐
-         │    INGESTION METHODS     │
-         │  ──────────────────────  │
-         │  - COPY INTO (batch)     │
-         │  - Auto Loader (stream)  │
-         │  - Streaming Tables      │
-         └───────────┬──────────────┘
-                     │
-                     ▼
-         ┌──────────────────────────────────────┐
-         │      DELTA LAKE TABLES               │
-         │  ──────────────────────────────────  │
-         │  - Schema inference                  │
-         │  - Schema evolution                  │
-         │  - Error handling                    │
-         └──────────────────────────────────────┘
+```mermaid
+flowchart TD
+    TITLE["INGESTION TECHNIQUES"]
+    
+    SRC["Source Systems<br/>• Databases<br/>• APIs<br/>• Streams"]
+    FS["File Storage<br/>• S3/ADLS/GCS<br/>• UC Volumes<br/>• DBFS"]
+    
+    METHODS["INGESTION METHODS<br/>• COPY INTO (batch)<br/>• Auto Loader (stream)<br/>• Streaming Tables"]
+    
+    DELTA["DELTA LAKE TABLES<br/>• Schema inference<br/>• Schema evolution<br/>• Error handling"]
+    
+    TITLE --> SRC
+    TITLE --> FS
+    SRC --> METHODS
+    FS --> METHODS
+    METHODS --> DELTA
+    
+    style TITLE fill:#b3e5fc,color:#000,stroke:#0288d1,stroke-width:2px
+    style SRC fill:#fff9c4,color:#000,stroke:#f57f17,stroke-width:2px
+    style FS fill:#fff9c4,color:#000,stroke:#f57f17,stroke-width:2px
+    style METHODS fill:#ce93d8,color:#000,stroke:#7b1fa2,stroke-width:2px
+    style DELTA fill:#81c784,color:#000,stroke:#388e3c,stroke-width:2px
 ```
 
 **Técnicas Implementadas:**
@@ -208,78 +174,28 @@ Implementação prática da arquitetura Medallion (Bronze-Silver-Gold) com dados
 
 **Arquitetura Completa:**
 
-```
-┌─────────────────────────────────────────────────────────────────┐
-│              MEDALLION ARCHITECTURE - EMPLOYEES                 │
-└─────────────────────────────────────────────────────────────────┘
-
-┌──────────────────┐
-│   UC VOLUMES     │
-│  myfiles/*.csv   │
-└────────┬─────────┘
-         │
-         │ COPY INTO
-         ▼
-┌─────────────────────────────────────────────────────────────────┐
-│                    BRONZE LAYER                                 │
-│  employes_bronze                                                │
-│  ─────────────────────────────────────────────────────────────  │
-│  Notebook: Notebook_Employes_Bronze                             │
-│                                                                 │
-│  Características:                                               │
-│  - Dados brutos sem transformação                               │
-│  - Schema original dos arquivos CSV                             │
-│  - COPY INTO para ingestão idempotente                          │
-│  - Histórico completo de todas as cargas                        │
-│                                                                 │
-│  Campos:                                                        │
-│  - ID (INT)                                                     │
-│  - FirstName (STRING)                                           │
-│  - Country (STRING)                                             │
-│  - Role (STRING)                                                │
-└───────────────────────────┬─────────────────────────────────────┘
-                            │
-                            │ Transformations
-                            ▼
-┌─────────────────────────────────────────────────────────────────┐
-│                    SILVER LAYER                                 │
-│  employes_silver                                                │
-│  ─────────────────────────────────────────────────────────────  │
-│  Notebook: Notebook_Employes_Silver_Gold                        │
-│                                                                 │
-│  Transformações:                                                │
-│  - Limpeza de dados (nulls, duplicatas)                         │
-│  - Padronização de campos (uppercase, trim)                     │
-│  - Validação de regras de negócio                               │
-│  - Type casting e conversões                                    │
-│  - Enriquecimento de dados                                      │
-│                                                                 │
-│  Qualidade:                                                     │
-│  - Remoção de registros inválidos                               │
-│  - Normalização de nomes de países                              │
-│  - Validação de IDs únicos                                      │
-└───────────────────────────┬─────────────────────────────────────┘
-                            │
-                            │ Aggregations
-                            ▼
-┌─────────────────────────────────────────────────────────────────┐
-│                     GOLD LAYER                                  │
-│  employes_gold                                                  │
-│  ─────────────────────────────────────────────────────────────  │
-│  Notebook: Notebook_Employes_Silver_Gold                        │
-│                                                                 │
-│  Agregações:                                                    │
-│  - Contagem de funcionários por país                            │
-│  - Contagem de funcionários por role                            │
-│  - Estatísticas por departamento                                │
-│  - Views analíticas                                             │
-│                                                                 │
-│  Uso:                                                           │
-│  - Dashboards                                                   │
-│  - Relatórios executivos                                        │
-│  - Data Science                                                 │
-│  - BI Tools (Power BI, Tableau)                                 │
-└─────────────────────────────────────────────────────────────────┘
+```mermaid
+flowchart TD
+    TITLE["MEDALLION ARCHITECTURE - EMPLOYEES"]
+    
+    UC["UC VOLUMES<br/>myfiles/*.csv"]
+    
+    BRONZE["BRONZE LAYER<br/>employes_bronze<br/>━━━━━━━━━━━━━━━━<br/>Notebook: Notebook_Employes_Bronze<br/><br/>• Dados brutos sem transformação<br/>• Schema original dos arquivos CSV<br/>• COPY INTO para ingestão idempotente<br/>• Histórico completo de todas as cargas<br/><br/>Campos: ID, FirstName, Country, Role"]
+    
+    SILVER["SILVER LAYER<br/>employes_silver<br/>━━━━━━━━━━━━━━━━<br/>Notebook: Notebook_Employes_Silver_Gold<br/><br/>• Limpeza de dados (nulls, duplicatas)<br/>• Padronização de campos (uppercase, trim)<br/>• Validação de regras de negócio<br/>• Type casting e conversões<br/>• Enriquecimento de dados"]
+    
+    GOLD["GOLD LAYER<br/>employes_gold<br/>━━━━━━━━━━━━━━━━<br/>Notebook: Notebook_Employes_Silver_Gold<br/><br/>• Contagem de funcionários por país<br/>• Contagem de funcionários por role<br/>• Estatísticas por departamento<br/>• Views analíticas<br/><br/>Uso: Dashboards, Relatórios, BI Tools"]
+    
+    TITLE --> UC
+    UC -->|"COPY INTO"| BRONZE
+    BRONZE -->|"Transformations"| SILVER
+    SILVER -->|"Aggregations"| GOLD
+    
+    style TITLE fill:#b3e5fc,color:#000,stroke:#0288d1,stroke-width:2px
+    style UC fill:#bbdefb,color:#000,stroke:#1976d2,stroke-width:2px
+    style BRONZE fill:#8d6e63,color:#fff,stroke:#5d4037,stroke-width:2px
+    style SILVER fill:#bdbdbd,color:#333,stroke:#757575,stroke-width:2px
+    style GOLD fill:#ffd54f,color:#333,stroke:#f57f17,stroke-width:2px
 ```
 
 **Notebooks:**
@@ -305,49 +221,34 @@ Implementação de pipeline declarativo usando Spark Declarative Pipelines (SDP)
 
 **Arquitetura SDP:**
 
-```
-┌──────────────────────────────────────────────────────────────────┐
-│         SPARK DECLARATIVE PIPELINE (LAKEFLOW)                    │
-└──────────────────────────────────────────────────────────────────┘
-
-┌──────────────────────────────────────────────────────────────────┐
-│  Pipeline Configuration                                          │
-│  ──────────────────────────────────────────────────────────────  │
-│  - Catalog: workspace                                            │
-│  - Schema: default                                               │
-│  - Target: UC Tables (dbacademy.get_started_de)                  │
-│  - Serverless: Yes                                               │
-│  - Photon: Yes                                                   │
-│  - Mode: TRIGGERED                                               │
-└──────────────────────────────────────────────────────────────────┘
-
-┌──────────────────────────────────────────────────────────────────┐
-│  Libraries (Notebooks do diretório Orchestration/)                   │
-│  ──────────────────────────────────────────────────────────────  │
-│                                                                  │
-│  📒 Notebook_Bronze_SDP                                          │
-│  - CREATE STREAMING TABLE employes_bronze_sdp                   │
-│  - Ingestao via read_files() de CSV no volume myfiles            │
-│                                                                  │
-│  📒 Notebook_Silver_SDP                                          │
-│  - CREATE MATERIALIZED VIEW employes_silver_sdp                 │
-│  - Validacoes: ID NOT NULL, FirstName NOT NULL                  │
-│  - Transformacoes: UPPER(FirstName), UPPER(Country), UPPER(Role)│
-│  - Colunas de auditoria: dt_procs_timestamp, dt_procs            │
-│                                                                  │
-│  📒 Notebook_Gold_SDP                                            │
-│  - CREATE MATERIALIZED VIEW employes_gold_sdp                   │
-│  - Agregacao: contagem de funcionarios por Role                 │
-└──────────────────────────────────────────────────────────────────┘
-
-           ┌──────────────────────────────────┐
-           │    PIPELINE EXECUTION            │
-           │  ──────────────────────────────  │
-           │  1. Parse definitions            │
-           │  2. Build DAG                    │
-           │  3. Execute dependencies         │
-           │  4. Monitor & log                │
-           └──────────────────────────────────┘
+```mermaid
+flowchart TD
+    TITLE["SPARK DECLARATIVE PIPELINE (LAKEFLOW)"]
+    
+    CONFIG["Pipeline Configuration<br/>• Catalog: workspace<br/>• Schema: default<br/>• Target: UC Tables (dbacademy.get_started_de)<br/>• Serverless: Yes | Photon: Yes<br/>• Mode: TRIGGERED"]
+    
+    NB_BRONZE["📒 Notebook_Bronze_SDP<br/>• CREATE STREAMING TABLE employes_bronze_sdp<br/>• Ingestão via read_files() de CSV no volume myfiles"]
+    
+    NB_SILVER["📒 Notebook_Silver_SDP<br/>• CREATE MATERIALIZED VIEW employes_silver_sdp<br/>• Validações: ID NOT NULL, FirstName NOT NULL<br/>• Transformações: UPPER(FirstName), UPPER(Country), UPPER(Role)<br/>• Colunas de auditoria: dt_procs_timestamp, dt_procs"]
+    
+    NB_GOLD["📒 Notebook_Gold_SDP<br/>• CREATE MATERIALIZED VIEW employes_gold_sdp<br/>• Agregação: contagem de funcionários por Role"]
+    
+    EXEC["PIPELINE EXECUTION<br/>1. Parse definitions<br/>2. Build DAG<br/>3. Execute dependencies<br/>4. Monitor & log"]
+    
+    TITLE --> CONFIG
+    CONFIG --> NB_BRONZE
+    CONFIG --> NB_SILVER
+    CONFIG --> NB_GOLD
+    NB_BRONZE --> EXEC
+    NB_SILVER --> EXEC
+    NB_GOLD --> EXEC
+    
+    style TITLE fill:#b3e5fc,color:#000,stroke:#0288d1,stroke-width:2px
+    style CONFIG fill:#ce93d8,color:#000,stroke:#7b1fa2,stroke-width:2px
+    style NB_BRONZE fill:#8d6e63,color:#fff,stroke:#5d4037,stroke-width:2px
+    style NB_SILVER fill:#bdbdbd,color:#333,stroke:#757575,stroke-width:2px
+    style NB_GOLD fill:#ffd54f,color:#333,stroke:#f57f17,stroke-width:2px
+    style EXEC fill:#81c784,color:#000,stroke:#388e3c,stroke-width:2px
 ```
 
 **Características:**
@@ -371,44 +272,35 @@ Exemplos de orquestração de pipelines usando Spark Declarative Pipelines com n
 
 **Arquitetura de Orquestração:**
 
-```
-┌──────────────────────────────────────────────────────────────────┐
-│                    ORCHESTRATION PATTERN                         │
-└──────────────────────────────────────────────────────────────────┘
-
-┌──────────────────────────────────────────────────────────────────┐
-│  Databricks Pipeline / Job                                       │
-│  ──────────────────────────────────────────────────────────────  │
-│                                                                  │
-│  ┌────────────────┐        ┌────────────────┐                   │
-│  │ Notebook_Bronze│───────►│ Notebook_Silver│                   │
-│  │     _SDP       │        │     _SDP       │                   │
-│  └────────────────┘        └────────┬───────┘                   │
-│         │                           │                            │
-│         │                           ▼                            │
-│         │                  ┌────────────────┐                    │
-│         │                  │ Notebook_Gold  │                    │
-│         │                  │     _SDP       │                    │
-│         │                  └────────────────┘                    │
-│         │                                                        │
-│         ▼                                                        │
-│  ┌──────────────────────────────────────────┐                   │
-│  │    DELTA LAKE TABLES                     │                   │
-│  │  ──────────────────────────────────────  │                   │
-│  │  - tb_bronze → tb_silver → tb_gold       │                   │
-│  │  - Automatic dependencies                │                   │
-│  │  - Error handling                        │                   │
-│  │  - Retry logic                           │                   │
-│  └──────────────────────────────────────────┘                   │
-└──────────────────────────────────────────────────────────────────┘
-
-┌──────────────────────────────────────────────────────────────────┐
-│  Execution Modes                                                 │
-│  ──────────────────────────────────────────────────────────────  │
-│  - TRIGGERED: On-demand execution                                │
-│  - CONTINUOUS: Always-on streaming                               │
-│  - SCHEDULED: Cron-based triggers                                │
-└──────────────────────────────────────────────────────────────────┘
+```mermaid
+flowchart TD
+    TITLE["ORCHESTRATION PATTERN"]
+    
+    JOB["Databricks Pipeline / Job"]
+    
+    NB_BRONZE["Notebook_Bronze_SDP"]
+    NB_SILVER["Notebook_Silver_SDP"]
+    NB_GOLD["Notebook_Gold_SDP"]
+    
+    DELTA["DELTA LAKE TABLES<br/>• tb_bronze → tb_silver → tb_gold<br/>• Automatic dependencies<br/>• Error handling<br/>• Retry logic"]
+    
+    MODES["Execution Modes<br/>• TRIGGERED: On-demand execution<br/>• CONTINUOUS: Always-on streaming<br/>• SCHEDULED: Cron-based triggers"]
+    
+    TITLE --> JOB
+    JOB --> NB_BRONZE
+    JOB --> NB_SILVER
+    NB_SILVER --> NB_GOLD
+    NB_BRONZE --> DELTA
+    NB_GOLD --> DELTA
+    DELTA --> MODES
+    
+    style TITLE fill:#b3e5fc,color:#000,stroke:#0288d1,stroke-width:2px
+    style JOB fill:#DDA0DD,color:#000,stroke:#9370DB,stroke-width:2px
+    style NB_BRONZE fill:#8d6e63,color:#fff,stroke:#5d4037,stroke-width:2px
+    style NB_SILVER fill:#bdbdbd,color:#333,stroke:#757575,stroke-width:2px
+    style NB_GOLD fill:#ffd54f,color:#333,stroke:#f57f17,stroke-width:2px
+    style DELTA fill:#81c784,color:#000,stroke:#388e3c,stroke-width:2px
+    style MODES fill:#bbdefb,color:#000,stroke:#1976d2,stroke-width:2px
 ```
 
 **Notebooks:**
@@ -473,36 +365,24 @@ Exemplos de orquestração de pipelines usando Spark Declarative Pipelines com n
 
 ## Fluxo de Trabalho Completo
 
-```
-┌──────────────────────────────────────────────────────────────┐
-│              END-TO-END DATA ENGINEERING FLOW                │
-└──────────────────────────────────────────────────────────────┘
-
-1. INGESTION
-   ├── Source files → UC Volumes
-   ├── COPY INTO / Auto Loader
-   └── Bronze tables (Delta)
-
-2. TRANSFORMATION
-   ├── Bronze → Silver (cleaning)
-   ├── Data quality checks
-   └── Business rules application
-
-3. AGGREGATION
-   ├── Silver → Gold (analytics)
-   ├── Materialized views
-   └── Optimized for queries
-
-4. ORCHESTRATION
-   ├── Spark Declarative Pipelines
-   ├── Databricks Jobs
-   └── Scheduling & monitoring
-
-5. CONSUMPTION
-   ├── SQL Analytics
-   ├── Dashboards
-   ├── BI Tools
-   └── ML Pipelines
+```mermaid
+flowchart TD
+    TITLE["END-TO-END DATA ENGINEERING FLOW"]
+    
+    S1["1. INGESTION<br/>• Source files → UC Volumes<br/>• COPY INTO / Auto Loader<br/>• Bronze tables (Delta)"]
+    S2["2. TRANSFORMATION<br/>• Bronze → Silver (cleaning)<br/>• Data quality checks<br/>• Business rules application"]
+    S3["3. AGGREGATION<br/>• Silver → Gold (analytics)<br/>• Materialized views<br/>• Optimized for queries"]
+    S4["4. ORCHESTRATION<br/>• Spark Declarative Pipelines<br/>• Databricks Jobs<br/>• Scheduling & monitoring"]
+    S5["5. CONSUMPTION<br/>• SQL Analytics<br/>• Dashboards<br/>• BI Tools<br/>• ML Pipelines"]
+    
+    TITLE --> S1 --> S2 --> S3 --> S4 --> S5
+    
+    style TITLE fill:#b3e5fc,color:#000,stroke:#0288d1,stroke-width:2px
+    style S1 fill:#8d6e63,color:#fff,stroke:#5d4037,stroke-width:2px
+    style S2 fill:#bdbdbd,color:#333,stroke:#757575,stroke-width:2px
+    style S3 fill:#ffd54f,color:#333,stroke:#f57f17,stroke-width:2px
+    style S4 fill:#DDA0DD,color:#000,stroke:#9370DB,stroke-width:2px
+    style S5 fill:#81c784,color:#000,stroke:#388e3c,stroke-width:2px
 ```
 
 ---
