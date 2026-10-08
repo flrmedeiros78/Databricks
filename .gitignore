@@ -6,3 +6,6 @@ InvestFacil/notebooks/00_ConfigToken.ipynb
 
 # Diretorio de export temporario
 InvestFacil/export/
+
+# Diretorio de backup (copias de seguranca locais)
+InvestFacil/backup/
